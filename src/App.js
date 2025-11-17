@@ -2,9 +2,14 @@ import React, { useState } from "react";
 import "./index.css";
 
 function App() {
-  const [status, setStatus] = useState(null);
+  const [isShipperModalOpen, setIsShipperModalOpen] = useState(false);
+  const [isCarrierModalOpen, setIsCarrierModalOpen] = useState(false);
+  const [shipperStatus, setShipperStatus] = useState(null);
+  const [carrierStatus, setCarrierStatus] = useState(null);
 
-  const handleQuoteSubmit = async (e) => {
+  const FORMSPREE_ENDPOINT = "https://formspree.io/f/mdkybolv";
+
+  const submitForm = async (e, setStatus) => {
     e.preventDefault();
     setStatus("loading");
 
@@ -12,7 +17,7 @@ function App() {
     const formData = new FormData(form);
 
     try {
-      const response = await fetch("https://formspree.io/f/mdkybolv", {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -32,6 +37,9 @@ function App() {
     }
   };
 
+  const handleShipperSubmit = (e) => submitForm(e, setShipperStatus);
+  const handleCarrierSubmit = (e) => submitForm(e, setCarrierStatus);
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
       {/* Header */}
@@ -50,7 +58,7 @@ function App() {
               </div>
             </div>
           </div>
-          <nav className="hidden sm:flex gap-6 text-sm text-slate-300">
+          <nav className="hidden sm:flex gap-6 text-sm text-slate-300 items-center">
             <a href="#services" className="hover:text-emerald-400">
               Services
             </a>
@@ -63,9 +71,12 @@ function App() {
             <a href="#about" className="hover:text-emerald-400">
               About
             </a>
-            <a href="#quote" className="hover:text-emerald-400">
+            <button
+              onClick={() => setIsShipperModalOpen(true)}
+              className="rounded-md bg-emerald-500 px-3 py-1 text-xs font-medium text-slate-950 hover:bg-emerald-400"
+            >
               Request Quote
-            </a>
+            </button>
           </nav>
         </div>
       </header>
@@ -88,12 +99,12 @@ function App() {
               <li>• Same-day and next-day LTL within 500 miles</li>
               <li>• Single point of contact for every shipment</li>
             </ul>
-            <a
-              href="#quote"
+            <button
+              onClick={() => setIsShipperModalOpen(true)}
               className="inline-flex items-center justify-center rounded-md bg-emerald-500 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-emerald-400"
             >
               Request a freight quote
-            </a>
+            </button>
           </div>
 
           <div className="border border-slate-800 rounded-xl p-4 bg-slate-900/40">
@@ -142,7 +153,7 @@ function App() {
           <h2 className="text-2xl font-semibold mb-4">For Shippers</h2>
 
           <p className="text-slate-300 text-sm mb-4 leading-relaxed">
-            Whether you're moving a single pallet or recurring truckload
+            Whether you&apos;re moving a single pallet or recurring truckload
             volume, Global Nexus Shipping provides dependable capacity and clear
             communication on every shipment. We focus on lanes where we can
             consistently execute, not on trying to be everything to everyone.
@@ -177,16 +188,16 @@ function App() {
           </div>
 
           <p className="text-slate-300 text-sm mt-4 leading-relaxed">
-            Share your lane details and service requirements, and we'll come
-            back with clear options and honest pricing.
+            Share your lane details and service requirements, and we&apos;ll
+            come back with clear options and honest pricing.
           </p>
 
-          <a
-            href="#quote"
+          <button
+            onClick={() => setIsShipperModalOpen(true)}
             className="inline-flex mt-4 items-center justify-center rounded-md bg-emerald-500 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-emerald-400"
           >
             Request a freight quote
-          </a>
+          </button>
         </section>
 
         {/* Carriers */}
@@ -228,16 +239,16 @@ function App() {
 
           <p className="text-slate-300 text-sm mt-4 leading-relaxed">
             To start the onboarding process, share your MC/DOT, equipment type,
-            preferred lanes, and insurance details. We'll reach out as new
+            preferred lanes, and insurance details. We&apos;ll reach out as new
             opportunities match your profile.
           </p>
 
-          <a
-            href="#quote"
+          <button
+            onClick={() => setIsCarrierModalOpen(true)}
             className="inline-flex mt-4 items-center justify-center rounded-md bg-emerald-500 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-emerald-400"
           >
             Register your interest as a carrier
-          </a>
+          </button>
         </section>
 
         {/* About */}
@@ -275,193 +286,432 @@ function App() {
             Our commitment is simple:{" "}
             <span className="text-emerald-400 font-medium">
               deliver every load with integrity, precision, and the
-              responsiveness today's supply chains demand.
+              responsiveness today&apos;s supply chains demand.
             </span>
           </p>
         </section>
 
-        {/* Quote form */}
-        <section
-          id="quote"
-          className="mt-20 border border-slate-800 rounded-2xl p-6 bg-slate-900/40"
-        >
-          <h2 className="text-xl font-semibold mb-2">
-            Request a freight quote
-          </h2>
-          <p className="text-sm text-slate-300 mb-4">
-            Share a few details about your shipment and we'll follow up with
-            pricing and options.
-          </p>
-
-          <form onSubmit={handleQuoteSubmit} className="space-y-4">
-            {/* Contact info */}
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-1">
-                <label className="block text-xs text-slate-300" htmlFor="name">
-                  Name *
-                </label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  placeholder="Your full name"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label
-                  className="block text-xs text-slate-300"
-                  htmlFor="company"
-                >
-                  Company
-                </label>
-                <input
-                  id="company"
-                  name="company"
-                  type="text"
-                  className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  placeholder="Company name"
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-1">
-                <label
-                  className="block text-xs text-slate-300"
-                  htmlFor="email"
-                >
-                  Email *
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  placeholder="you@example.com"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label
-                  className="block text-xs text-slate-300"
-                  htmlFor="phone"
-                >
-                  Phone
-                </label>
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  placeholder="+1 (555) 000-0000"
-                />
-              </div>
-            </div>
-
-            {/* Shipment details */}
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="space-y-1">
-                <label
-                  className="block text-xs text-slate-300"
-                  htmlFor="origin"
-                >
-                  Origin *
-                </label>
-                <input
-                  id="origin"
-                  name="origin"
-                  type="text"
-                  required
-                  className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  placeholder="City, State"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label
-                  className="block text-xs text-slate-300"
-                  htmlFor="destination"
-                >
-                  Destination *
-                </label>
-                <input
-                  id="destination"
-                  name="destination"
-                  type="text"
-                  required
-                  className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  placeholder="City, State"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="block text-xs text-slate-300" htmlFor="mode">
-                  Mode
-                </label>
-                <select
-                  id="mode"
-                  name="mode"
-                  className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  defaultValue="Truckload"
-                >
-                  <option>Truckload</option>
-                  <option>LTL</option>
-                  <option>Flatbed</option>
-                  <option>Reefer</option>
-                  <option>Other</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <label
-                className="block text-xs text-slate-300"
-                htmlFor="details"
+        {/* Shipper Modal */}
+        {isShipperModalOpen && (
+          <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60">
+            <div className="bg-slate-950 border border-slate-800 rounded-2xl max-w-lg w-full mx-4 p-6 relative">
+              <button
+                onClick={() => {
+                  setIsShipperModalOpen(false);
+                  setShipperStatus(null);
+                }}
+                className="absolute top-3 right-3 text-slate-400 hover:text-slate-200 text-sm"
               >
-                Freight details *
-              </label>
-              <textarea
-                id="details"
-                name="details"
-                required
-                rows="4"
-                className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                placeholder="Pallet count, weight, commodity, pickup date, special handling, etc."
-              ></textarea>
+                ✕
+              </button>
+
+              <h2 className="text-xl font-semibold mb-2">
+                Request a freight quote
+              </h2>
+              <p className="text-sm text-slate-300 mb-4">
+                Share your shipment details and we&apos;ll follow up with
+                pricing and options.
+              </p>
+
+              <form onSubmit={handleShipperSubmit} className="space-y-4">
+                {/* Name / Company */}
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-1">
+                    <label
+                      className="block text-xs text-slate-300"
+                      htmlFor="modalName"
+                    >
+                      Name *
+                    </label>
+                    <input
+                      id="modalName"
+                      name="name"
+                      type="text"
+                      required
+                      className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      placeholder="Your full name"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label
+                      className="block text-xs text-slate-300"
+                      htmlFor="modalCompany"
+                    >
+                      Company
+                    </label>
+                    <input
+                      id="modalCompany"
+                      name="company"
+                      type="text"
+                      className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      placeholder="Company name"
+                    />
+                  </div>
+                </div>
+
+                {/* Email / Phone */}
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-1">
+                    <label
+                      className="block text-xs text-slate-300"
+                      htmlFor="modalEmail"
+                    >
+                      Email *
+                    </label>
+                    <input
+                      id="modalEmail"
+                      name="email"
+                      type="email"
+                      required
+                      className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      placeholder="you@example.com"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label
+                      className="block text-xs text-slate-300"
+                      htmlFor="modalPhone"
+                    >
+                      Phone
+                    </label>
+                    <input
+                      id="modalPhone"
+                      name="phone"
+                      type="tel"
+                      className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      placeholder="+1 (555) 000-0000"
+                    />
+                  </div>
+                </div>
+
+                {/* Origin / Destination / Mode */}
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div className="space-y-1">
+                    <label
+                      className="block text-xs text-slate-300"
+                      htmlFor="modalOrigin"
+                    >
+                      Origin *
+                    </label>
+                    <input
+                      id="modalOrigin"
+                      name="origin"
+                      type="text"
+                      required
+                      className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      placeholder="City, State"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label
+                      className="block text-xs text-slate-300"
+                      htmlFor="modalDestination"
+                    >
+                      Destination *
+                    </label>
+                    <input
+                      id="modalDestination"
+                      name="destination"
+                      type="text"
+                      required
+                      className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      placeholder="City, State"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label
+                      className="block text-xs text-slate-300"
+                      htmlFor="modalMode"
+                    >
+                      Mode
+                    </label>
+                    <select
+                      id="modalMode"
+                      name="mode"
+                      className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      defaultValue="Truckload"
+                    >
+                      <option>Truckload</option>
+                      <option>LTL</option>
+                      <option>Flatbed</option>
+                      <option>Reefer</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Details */}
+                <div className="space-y-1">
+                  <label
+                    className="block text-xs text-slate-300"
+                    htmlFor="modalDetails"
+                  >
+                    Freight details *
+                  </label>
+                  <textarea
+                    id="modalDetails"
+                    name="details"
+                    required
+                    rows="4"
+                    className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    placeholder="Pallet count, weight, commodity, pickup date, special handling, etc."
+                  ></textarea>
+                </div>
+
+                <input
+                  type="hidden"
+                  name="_subject"
+                  value="New shipper quote request from GlobalNexusShipping.com"
+                />
+
+                <button
+                  type="submit"
+                  disabled={shipperStatus === "loading"}
+                  className="inline-flex items-center justify-center rounded-md bg-emerald-500 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-emerald-400 disabled:opacity-60 disabled:cursor-wait"
+                >
+                  {shipperStatus === "loading" ? "Sending..." : "Submit request"}
+                </button>
+
+                {shipperStatus === "success" && (
+                  <p className="text-xs text-emerald-400 mt-2">
+                    Thank you — your request was sent. We&apos;ll follow up
+                    shortly.
+                  </p>
+                )}
+                {shipperStatus === "error" && (
+                  <p className="text-xs text-rose-400 mt-2">
+                    Something went wrong sending your request. Please try again,
+                    or email us directly.
+                  </p>
+                )}
+              </form>
             </div>
+          </div>
+        )}
 
-            {/* Optional: hidden subject for your email */}
-            <input
-              type="hidden"
-              name="_subject"
-              value="New freight inquiry from GlobalNexusShipping.com"
-            />
+        {/* Carrier Modal */}
+        {isCarrierModalOpen && (
+          <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60">
+            <div className="bg-slate-950 border border-slate-800 rounded-2xl max-w-lg w-full mx-4 p-6 relative">
+              <button
+                onClick={() => {
+                  setIsCarrierModalOpen(false);
+                  setCarrierStatus(null);
+                }}
+                className="absolute top-3 right-3 text-slate-400 hover:text-slate-200 text-sm"
+              >
+                ✕
+              </button>
 
-            <button
-              type="submit"
-              disabled={status === "loading"}
-              className="inline-flex items-center justify-center rounded-md bg-emerald-500 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-emerald-400 disabled:opacity-60 disabled:cursor-wait"
-            >
-              {status === "loading" ? "Sending..." : "Submit request"}
-            </button>
-
-            {status === "success" && (
-              <p className="text-xs text-emerald-400 mt-2">
-                Thank you — your request was sent. We'll follow up shortly.
+              <h2 className="text-xl font-semibold mb-2">Carrier signup</h2>
+              <p className="text-sm text-slate-300 mb-4">
+                Share your carrier information and preferred lanes. We&apos;ll
+                review and reach out as new opportunities match your profile.
               </p>
-            )}
-            {status === "error" && (
-              <p className="text-xs text-rose-400 mt-2">
-                Something went wrong sending your request. Please try again, or
-                email us directly.
-              </p>
-            )}
-          </form>
-        </section>
+
+              <form onSubmit={handleCarrierSubmit} className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-1">
+                    <label
+                      className="block text-xs text-slate-300"
+                      htmlFor="carrierName"
+                    >
+                      Carrier / Company name *
+                    </label>
+                    <input
+                      id="carrierName"
+                      name="carrier_name"
+                      type="text"
+                      required
+                      className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      placeholder="Legal or DBA name"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label
+                      className="block text-xs text-slate-300"
+                      htmlFor="carrierContact"
+                    >
+                      Contact name *
+                    </label>
+                    <input
+                      id="carrierContact"
+                      name="contact_name"
+                      type="text"
+                      required
+                      className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      placeholder="Dispatcher / owner-operator"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-1">
+                    <label
+                      className="block text-xs text-slate-300"
+                      htmlFor="carrierEmail"
+                    >
+                      Email *
+                    </label>
+                    <input
+                      id="carrierEmail"
+                      name="email"
+                      type="email"
+                      required
+                      className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      placeholder="you@example.com"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label
+                      className="block text-xs text-slate-300"
+                      htmlFor="carrierPhone"
+                    >
+                      Phone *
+                    </label>
+                    <input
+                      id="carrierPhone"
+                      name="phone"
+                      type="tel"
+                      required
+                      className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      placeholder="+1 (555) 000-0000"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div className="space-y-1">
+                    <label
+                      className="block text-xs text-slate-300"
+                      htmlFor="mcNumber"
+                    >
+                      MC #
+                    </label>
+                    <input
+                      id="mcNumber"
+                      name="mc_number"
+                      type="text"
+                      className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      placeholder="MC123456"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label
+                      className="block text-xs text-slate-300"
+                      htmlFor="dotNumber"
+                    >
+                      DOT #
+                    </label>
+                    <input
+                      id="dotNumber"
+                      name="dot_number"
+                      type="text"
+                      className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      placeholder="DOT1234567"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label
+                      className="block text-xs text-slate-300"
+                      htmlFor="equipmentType"
+                    >
+                      Equipment type *
+                    </label>
+                    <select
+                      id="equipmentType"
+                      name="equipment_type"
+                      required
+                      className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      defaultValue=""
+                    >
+                      <option value="" disabled>
+                        Select equipment
+                      </option>
+                      <option>Dry van</option>
+                      <option>Reefer</option>
+                      <option>Flatbed</option>
+                      <option>Step deck</option>
+                      <option>Hotshot</option>
+                      <option>Power only</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label
+                    className="block text-xs text-slate-300"
+                    htmlFor="preferredLanes"
+                  >
+                    Preferred lanes / regions *
+                  </label>
+                  <textarea
+                    id="preferredLanes"
+                    name="preferred_lanes"
+                    required
+                    rows="3"
+                    className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    placeholder="Example: WA → OR, WA → CA, PNW regional, etc."
+                  ></textarea>
+                </div>
+
+                <div className="space-y-1">
+                  <label
+                    className="block text-xs text-slate-300"
+                    htmlFor="carrierNotes"
+                  >
+                    Notes (insurance, capacity, schedule)
+                  </label>
+                  <textarea
+                    id="carrierNotes"
+                    name="notes"
+                    rows="3"
+                    className="w-full rounded-md bg-slate-900 border border-slate-700 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    placeholder="Tell us about your lanes, weekly capacity, and any requirements."
+                  ></textarea>
+                </div>
+
+                <input
+                  type="hidden"
+                  name="_subject"
+                  value="New carrier signup from GlobalNexusShipping.com"
+                />
+
+                <button
+                  type="submit"
+                  disabled={carrierStatus === "loading"}
+                  className="inline-flex items-center justify-center rounded-md bg-emerald-500 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-emerald-400 disabled:opacity-60 disabled:cursor-wait"
+                >
+                  {carrierStatus === "loading"
+                    ? "Submitting..."
+                    : "Submit carrier details"}
+                </button>
+
+                {carrierStatus === "success" && (
+                  <p className="text-xs text-emerald-400 mt-2">
+                    Thank you — your details were sent. We&apos;ll review and
+                    reach out as opportunities match your profile.
+                  </p>
+                )}
+                {carrierStatus === "error" && (
+                  <p className="text-xs text-rose-400 mt-2">
+                    Something went wrong sending your details. Please try again,
+                    or email us directly.
+                  </p>
+                )}
+              </form>
+            </div>
+          </div>
+        )}
 
         {/* Footer */}
         <footer className="mt-20 border-t border-slate-800 py-6 text-xs text-slate-500">
