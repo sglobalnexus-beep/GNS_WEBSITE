@@ -716,7 +716,8 @@ function App() {
         {/* Footer */}
         <footer className="mt-20 border-t border-slate-800 py-6 text-xs text-slate-500">
           <p>© {new Date().getFullYear()} Global Nexus Shipping LLC</p>
-          <p>Seattle, Washington</p>
+          <p>600 1st Ave STE 102</p>
+          <p>Seattle, Washington 98104</p>
           <p>globalnexusshipping.com</p>
         </footer>
       </main>
